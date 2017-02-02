@@ -1,0 +1,137 @@
+//Creare tabele
+
+CREATE TABLE Pavilion (
+id_pavilion NUMBER(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+nume VARCHAR2(40),
+locatie VARCHAR2(10),
+numar_paturi NUMBER(6),
+	numar_telefon NUMBER(6) );
+CREATE TABLE Angajat (
+	id_angajat NUMBER(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume VARCHAR2(20),
+	prenume VARCHAR2(20),
+	adresa VARCHAR2(40),
+	numar_telefon NUMBER(9),
+	data_nasterii DATE,
+	sex VARCHAR2(10),
+	numar_asigurare NUMBER(20),
+	pozitie VARCHAR2(20),
+	id_experienta NUMBER(6) CONSTRAINT angajat_experientaFK REFERENCES Experienta(id_experienta),
+	id_contract NUMBER(6) CONSTRAINT angajat_contractFK REFERENCES Contract_angajare(id_contract),
+id_calificare NUMBER(6) CONSTRAINT angajat_calificareFK REFERENCES Calificare(id_calificare) );
+CREATE TABLE Angajat_munceste_pavilion (
+	id_angajat NUMBER(6) NOT NULL,
+	id_pavilion NUMBER(6) NOT NULL,
+	CONSTRAINT angajat_munceste_pavilionPK PRIMARY KEY(id_angajat,id_pavilion) );
+CREATE TABLE Calificare (
+	id_calificare NUMBER(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	data_obtinere DATE,
+	tip VARCHAR2(40),
+	nume_institutie VARCHAR2(40) );
+CREATE TABLE Experienta (
+	id_experienta NUMBER(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume_organizatie VARCHAR2(20),
+	pozitie VARCHAR2(20),
+	data_inceput DATE,
+	data_final DATE );
+CREATE TABLE Contract_angajare (
+	id_contract NUMBER(6, NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	numar_pre NUMBER(6),
+	tip_contract VARCHAR2(20),
+	tip_salariu VARCHAR2(20),
+	salariu_curent NUMBER(6),
+treapta_salariala NUMBER(6) );
+CREATE TABLE Orar_ture (
+	id_angajat NUMBER(6) NOT NULL AUTO_INCREMENT,
+	tip_tura VARCHAR2(20),
+	data DATE NOT NULL,
+CONSTRAINT orar_turePK PRIMARY KEY (id_angajat, data) );
+CREATE TABLE Pacient (
+	id_pacient NUMBER(6), NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume VARCHAR2(20),
+	prenume VARCHAR2(20),
+	adresa VARCHAR2(40),
+	numar_telefon NUMBER(9),
+	data_nasterii DATE,
+	sex VARCHAR2(10),
+	stare_civila VARCHAR2(10),
+	data_inregistrarii DATE,
+	id_ruda_pacient NUMBER(6) CONSTRAINT id_ruda_pacientFK REFERENCES Ruda_pacient(id_ruda_pacient),
+id_medic_familie NUMBER(6) CONSTRAINT id_medic_familieFK REFERENCES Medic_familie(id_medic_familie) );
+CREATE TABLE Ruda_pacient (
+	id_ruda_pacient NUMBER(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume VARCHAR2(20),
+	prenume VARCHAR2(20),
+	legatura_pacient VARCHAR2(20),
+	adresa VARCHAR2(40),
+numar_telefon NUMBER(6) );
+CREATE TABLE Medic_familie (
+	id_medic_familie NUMBER(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume VARCHAR2(20),
+	prenume VARCHAR2(20),
+	nume_clinica VARCHAR2(40),
+	adresa VARCHAR2(40),
+	numar_telefon NUMBER(9) );
+CREATE TABLE Consult (
+	id_pacient NUMBER(6) NOT NULL,
+	id_angajat NUMBER(6) NOT NULL,
+	id_pavilion NUMBER(6) NOT NULL, 
+	data DATE,
+CONSTRAINT consultPK PRIMARY KEY(id_pacient, id_angajat, id_pavilion) );
+CREATE TABLE Internare (
+	id_pavilion NUMBER(6) NOT NULL,
+	id_pacient NUMBER(6) NOT NULL,
+	data_plasare_lista_asteptare DATE,
+	nr_zile_internare NUMBER(5),
+	data_internare DATE,
+	data_prevazuta_externare DATE,
+data_externare DATE
+nr_pat NUMBER(6),
+CONSTRAINT internarePK PRIMARY KEY(id_pavilion, id_pacient) );
+CREATE TABLE Medicament (
+	id_medicament NUMBER(6), NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume VARCHAR2(30),
+	descriere VARCHAR2(40),
+	dozaj VARCHAR2(40),
+	mod_administrare VARCHAR2(20),
+	id_furnizor NUMBER(6) CONSTRAINT id_furnizorFK REFERENCES Furnizor(id_furnizor) );
+CREATE TABLE Material_tratament (
+	id_material NUMBER(6), NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume VARCHAR2(30),
+	descriere VARCHAR2(40),
+	id_furnizor NUMBER(6) CONSTRAINT id_furnizorFK REFERENCES Furnizor(id_furnizor) );
+CREATE TABLE Stoc (
+	id_material NUMBER(6) NOT NULL PRIMARY KEY,
+	cantitate NUMBER(6),
+	nivel_refacere_stoc NUMBER(6),
+	cost_per_unitate NUMBER(6) );
+CREATE TABLE Furnizor (
+	id_furnizor NUMBER(6), NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	nume VARCHAR2(20),
+	adresa VARCHAR2(40),
+	numar_telefon NUMBER(9),
+	numar_fax NUMBER(9) );
+CREATE TABLE Cerere_material (
+	id_cerere NUMBER(6), NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	id_pavilion NUMBER(6) CONSTRAINT id_pavilionFK REFERENCES Pavilion(id_pavilion),
+	id_angajat NUMBER(6) CONSTRAINT id_angajat REFERENCES Angajat(id_angajat),
+	id_angajat_primire NUMBER(6) CONSTRAINT id_angajat_primireFK REFERENCES Angajat(id_angajat),
+	Id_material NUMBER(6) CONSTRAINT id_materialFK REFERENCES Material_tratament(id_material),
+	data_cerere DATE,
+	cantitate NUMBER(6),
+Data_primire DATE );
+CREATE TABLE Medicament_per_cerere (
+	id_cerere NUMBER(6) NOT NULL,
+	id_medicament NUMBER(6) NOT NULL,
+	cantitate NUMBER(6),
+	CONSTRAINT medicament_per_cererePK PRIMARY KEY(id_cerere,id_medicament) );
+
+CREATE TABLE Material_per_cerere (
+	id_cerere NUMBER(6) NOT NULL,
+	id_material NUMBER(6) NOT NULL,
+	cantitate NUMBER(6),
+	CONSTRAINT material_per_cererePK PRIMARY KEY(id_cerere,id_material) );
+
+
+//Stergere tabele
+DROP TABLE Material_per_cerere CASCADE CONSTRAINTS;
